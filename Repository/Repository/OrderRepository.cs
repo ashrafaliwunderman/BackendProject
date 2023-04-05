@@ -5,6 +5,8 @@ using Core.Infrastructure;
 using Repository.UnitOfWork;
 using Core.IValidation;
 using System.Net;
+using Repository.Model;
+using System.Runtime.InteropServices;
 
 namespace Repository.Repository
 {
@@ -40,33 +42,20 @@ namespace Repository.Repository
             var priceCompareData = from op in orderProductList
                        join p in products on op.ProductID equals p.ID
                        where op.OrderID == orderId
-                       select new
+                       select new ProductOrderQuantity()
                        {
-                           productID = op.ProductID,
-                           have = p.Quantity,
-                           need = op.Quantity,
+                           ProductID = op.ProductID,
+                           InventoryHave = p.Quantity,
+                           OrderNeed = op.Quantity,
                            product = p
                        };
 
             var list = priceCompareData.ToList();
 
-            bool isSuccess;
             
-            if(priceCompareData.Where(x => x.have < x.need).Count() > 0)
+            if(IsOrderQuantityAvailable(priceCompareData, ref order))
             {
-                isSuccess = false;
-                order.StatusID = (int) OrderStatus.Rejected;
-            }
-            else
-            {
-                isSuccess = true;
-                order.StatusID = (int) OrderStatus.Approved;
-                priceCompareData.ToList().ForEach(x =>
-                {
-                    Product obj = x.product;
-                    obj.Quantity = x.have - x.need;
-                    productRepo.UpdateData(obj);
-                });  
+                UpdateProductQuatity(priceCompareData, ref order, productRepo);
             }
 
             await orderRepo.UpdateData(order);
@@ -74,6 +63,29 @@ namespace Repository.Repository
             await factory.SaveChangesAsync();
 
             return order;
+        }
+
+        private Order UpdateProductQuatity(IQueryable<ProductOrderQuantity> productOrderQuantity, ref Order? order, IRepository<Product> productRepo) {
+
+            order.StatusID = (int)OrderStatus.Approved;
+            productOrderQuantity.ToList().ForEach(x =>
+            {
+                Product obj = x.product;
+                obj.Quantity = x.InventoryHave - x.OrderNeed;
+                productRepo.UpdateData(obj);
+            });
+            return order;
+        }
+
+        private bool IsOrderQuantityAvailable(IQueryable<ProductOrderQuantity> obj, ref Order? order)
+        {
+            if (obj.Where(x => x.InventoryHave < x.OrderNeed).Count() > 0)
+            {
+                order.StatusID = (int)OrderStatus.Rejected;
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<IEnumerable<Order>> GetAllOrders()
@@ -86,17 +98,15 @@ namespace Repository.Repository
             return base.GetByIdAsync(id).AsTask();
         }
 
-        public async Task<IEnumerable<Order>> GetPendingOrderID()
+        public async Task<IEnumerable<Order>> GetPendingOrder()
         {
             var peddingOrder = await base.GetAllAsync(x => x.StatusID == (int)OrderStatus.Pedding);
             return peddingOrder;
-
-
         }
 
-        public async Task<List<int>> GetPeddingRequestToClose()
+        public async Task<List<int>> GetPeddingOrderIDs()
         {
-            var list = await this.GetPendingOrderID();
+            var list = await this.GetPendingOrder();
             List<int> ids = new List<int>();
             var factor = _unitOfWorkFactory.create();
             var orderRepo = factor.GetRepository<Order>();
@@ -104,7 +114,7 @@ namespace Repository.Repository
             foreach (var order in list)
             {
                 ids.Add(order.Id);
-                order.StatusID = 4;
+                order.StatusID = (int) OrderStatus.Onprocess;
                 orderRepo.UpdateData(order);
             }
 

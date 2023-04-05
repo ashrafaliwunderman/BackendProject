@@ -19,9 +19,9 @@ namespace Service.Service
             this._inventoryRepo = inventoryRepo;
         }
 
-        public async Task AddProduct(Product product)
+        public async Task<int> AddProduct(Product product)
         {
-            await _inventoryRepo.AddProduct(product);
+            return await _inventoryRepo.AddProduct(product);
         }
 
         public async Task DeleteProduct(int id)

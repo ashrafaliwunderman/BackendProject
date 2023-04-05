@@ -15,8 +15,8 @@ namespace Core.IRepository
 
         Task<Order> GetOrderByID(int id);
 
-        Task<IEnumerable<Order>> GetPendingOrderID();
-        Task<List<int>> GetPeddingRequestToClose();
+        Task<IEnumerable<Order>> GetPendingOrder();
+        Task<List<int>> GetPeddingOrderIDs();
         
     }
 }

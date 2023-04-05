@@ -21,9 +21,9 @@ namespace BackendAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Post(Model.Product product)
+        public async Task<int> Post(Model.Product product)
         {
-            await _invertoryService.AddProduct(_mapper.Map<Model.Product, Core.Model.Product>(product));
+            return await _invertoryService.AddProduct(_mapper.Map<Model.Product, Core.Model.Product>(product));
         }
 
         [HttpPut]

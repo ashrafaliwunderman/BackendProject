@@ -9,7 +9,7 @@ namespace Service.Interface
 {
     public interface IInvetoryService
     {
-        Task AddProduct(Product product);
+        Task<int> AddProduct(Product product);
         Task UpdateProduct(Product product);
         Task DeleteProduct(int id);    
     }

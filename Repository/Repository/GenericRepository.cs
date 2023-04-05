@@ -56,7 +56,7 @@ namespace Repository.Repository
 
         public virtual async Task InsertData(TEntity entity)
         {
-            dbSet.Add(entity);
+            var temp = dbSet.Add(entity);
             context.Entry(entity).State = EntityState.Added;
         }
 

@@ -31,7 +31,7 @@ namespace Service.Service
 
         public async Task ClosePenddingOrder()
         {
-            List<int> list = await _orderRepo.GetPeddingRequestToClose();
+            List<int> list = await _orderRepo.GetPeddingOrderIDs();
             List<Task> tasks = new List<Task>();
             foreach (var item in list)
             {

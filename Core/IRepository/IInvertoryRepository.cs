@@ -9,7 +9,7 @@ namespace Core.IRepository
 {
     public interface IInvertoryRepository
     {
-        Task AddProduct(Product product);
+        Task<int> AddProduct(Product product);
         Task UpdateProduct(Product product);
         Task DeleteProduct(int id);
 

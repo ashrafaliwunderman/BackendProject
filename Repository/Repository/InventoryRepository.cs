@@ -17,10 +17,10 @@ namespace Repository.Repository
             base.dbSet = context.Set<Product>();
         }
 
-        public async Task AddProduct(Product product) 
+        public async Task<int> AddProduct(Product product) 
         {
             await base.InsertData(product);
-            await base.SaveChangesAsync();
+            return await base.SaveChangesAsync();
         }
 
         public async Task DeleteProduct(int id)
