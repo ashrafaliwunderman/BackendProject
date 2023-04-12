@@ -23,6 +23,12 @@ namespace BackendAPI.Controllers
         [HttpPost]
         public async Task Post(Model.Order order)
         {
+            var orderProduct = order.OrderProduct.GroupBy(x => x.ProductID).Select( x => new Model.OrderProduct { 
+                ProductID = x.Select(x => x.ProductID).FirstOrDefault(),
+                Quantity = x.Sum(x => x.Quantity)
+             }).ToList();
+
+            order.OrderProduct = orderProduct;
             await _orderService.AddOrder(_mapper.Map<Model.Order, Core.Model.Order>(order));
         }
 

@@ -16,7 +16,7 @@ namespace Unit_Test.Product
         public void ProductAddTest()
         {
             var options = new DbContextOptionsBuilder<BaseDbContext>()
-            .UseInMemoryDatabase(databaseName: "BackendMock")
+            .UseInMemoryDatabase(databaseName: "BackendMockAdd")
             .Options;
 
             using (var context = new BaseDbContext(options))
@@ -44,19 +44,6 @@ namespace Unit_Test.Product
                 Assert.AreEqual(2, list.Count);
 
             }
-
-            //var mockSet = new Mock<DbSet<Product>>();
-            //var mockContext = new Mock<BaseDbContext>();
-            //mockContext.Setup(m => m.Product).Returns(mockSet.Object);
-
-            //var invertoryRepo = new InventoryRepository(mockContext.Object);
-            //invertoryRepo.AddProduct( new Product() { 
-            //    Name = "Apple",
-            //    Quantity = 100
-            //});
-
-            //mockSet.Verify(m => m.Add(It.IsAny<Product>()), Times.Once());
-            //mockContext.Verify(m => m.SaveChanges(), Times.Once());
         }
 
         [Test]

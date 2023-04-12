@@ -109,7 +109,7 @@ namespace Unit_Test.Order
             var orderid = pendingOrder.FirstOrDefault().Id;
             var order = _orderRepo.CloseOrder(orderid);
 
-            var statusid = _dbContext.Order.Find(id).StatusID;
+            var statusid = _dbContext.Order.Find(orderid).StatusID;
 
             Assert.True(statusid == (int)OrderStatus.Rejected);
         }

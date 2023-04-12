@@ -29,6 +29,7 @@ namespace MessageQueuePubService.EmailRequestService
                                  routingKey: "email-send",
                                  basicProperties: null,
                                  body: body);
+
             return Task.CompletedTask;
 
         }
